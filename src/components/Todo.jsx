@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import React, {useRef}  from 'react';
+import { useState ,useRef,useEffect} from 'react'
 import todo_icon from '../assets/todo_icon.png'
 import Todoitems from './Todoitems';
 
  const Todo = () =>{
 
-    const [todoList, setTodoList] = useState([]);
+    const [todoList, setTodoList] = useState(localStorage.getItem("todos")?
+    JSON.parse(localStorage.getItem("todos")):[]);
 
     const inputRef = useRef();
 
@@ -33,6 +33,21 @@ import Todoitems from './Todoitems';
 
     }
 
+    const toggle = (id)=> {
+        setTodoList((prvTodos) =>{
+            return prvTodos.map((todo) =>{
+                if(todo.id === id){
+                    return{...todo, isComplete : !todo.isComplete }
+                }
+                return todo;
+            })
+        })
+    }
+
+    useEffect(()=>{
+        localStorage.setItem("todos", JSON.stringify(todoList))
+    },[todoList])
+
     return(
         <div className='bg-white place-self-center w-11/12 max-w-md flex flex-col p-7 min-h-[550px] rounded-xl'>
             
@@ -50,7 +65,7 @@ import Todoitems from './Todoitems';
          {/*--------------todo list-------------*/}
             <div>
             {todoList.map((item,index)=>{
-                return <Todoitems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo}  />
+                return <Todoitems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle = {toggle} />
             })}
 
 
